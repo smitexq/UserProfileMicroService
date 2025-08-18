@@ -1,6 +1,6 @@
 package com.eventhub.UserProfileMicroService.security;
 
-import com.eventhub.UserProfileMicroService.models.User;
+import com.eventhub.UserProfileMicroService.models.Profile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -8,9 +8,9 @@ import java.util.Collection;
 import java.util.List;
 
 public class UserDetailsImpl implements UserDetails {
-    private final User user;
-    public UserDetailsImpl(User user) {
-        this.user = user;
+    private final Profile profile;
+    public UserDetailsImpl(Profile profile) {
+        this.profile = profile;
     }
 
 
@@ -21,11 +21,11 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return null;
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return profile.getUsername();
     }
 }
