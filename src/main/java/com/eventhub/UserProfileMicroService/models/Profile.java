@@ -2,22 +2,29 @@ package com.eventhub.UserProfileMicroService.models;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users")
-public class User {
+public class Profile {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+//    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String username;
-    private String email;
+    private int age;
+
+    @ManyToMany
+    @JoinTable(
+            name = "profile_events",
+            joinColumns = @JoinColumn(name = "profile_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id")
+    )
+    private ArrayList<Event> events = new ArrayList<>();
 
 
-    public User() {}
-    public User(String username, String email, String password) {
+    public Profile() {}
+    public Profile(String username, String email, String password) {
         setUsername(username);
-        setEmail(email);
     }
 
 
@@ -26,8 +33,8 @@ public class User {
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public int getAge() {
+        return age;
     }
 
     public String getUsername() {
@@ -39,10 +46,6 @@ public class User {
     }
 
     public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+        return null;
     }
 }
