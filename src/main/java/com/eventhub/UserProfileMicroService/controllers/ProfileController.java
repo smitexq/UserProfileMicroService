@@ -1,12 +1,10 @@
 package com.eventhub.UserProfileMicroService.controllers;
 
+import com.eventhub.UserProfileMicroService.dto.InitProfileDTO;
 import com.eventhub.UserProfileMicroService.dto.ProfileDTO;
 import com.eventhub.UserProfileMicroService.service.ProfileService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/profile-service")
@@ -20,6 +18,12 @@ public class ProfileController {
     @GetMapping()
     public ResponseEntity<ProfileDTO> getProfile() {
         return ResponseEntity.ok(service.getProfile());
+    }
+
+    @PostMapping("/add_profile")
+    public void addNewProfile(@RequestBody InitProfileDTO initProfile) {
+        System.out.println("Получил");
+        service.addNewProfile(initProfile);
     }
 
     @PostMapping("/test")
