@@ -15,7 +15,8 @@ public class ProfileController {
         this.service = service;
     }
 
-    @GetMapping()
+
+    @GetMapping("/get_profile")
     public ResponseEntity<ProfileDTO> getProfile() {
         return ResponseEntity.ok(service.getProfile());
     }
@@ -26,24 +27,28 @@ public class ProfileController {
         service.addNewProfile(initProfile);
     }
 
-    @PostMapping("/test")
-    public void print() {
-        System.out.println("Принял запрос");
+    @PostMapping("/create_event")
+    public String addNewEvent(NewEventDTO newEvent) {
+        return service.addNewEvent(newEvent);
     }
 
-//    @GetMapping("/my_events")
-//    public ResponseEntity<EventsDTO> getEventsPerUser() {
-//
-//    }
-//
-//    @GetMapping("/my_activities")
-//    public ResponseEntity<ActivitiesDTO> getActivitiesPerUser() {
-//
-//    }
-//
-//    @PostMapping
-//    public String addNewEvent(NewEventDTO newEvent) {
-//
-//    }
+    @GetMapping("/my_events") //События которые создал пользователь
+    public ResponseEntity<EventsDTO> getEventsPerUser() {
+        return service.getEventsPerUser();
+    }
 
+    @GetMapping("/my_activities") //события на которые пользователь записан
+    public ResponseEntity<ActivitiesDTO> getActivitiesPerUser() {
+        return service.getActivitiesPerUser();
+    }
+
+    @PutMapping("/edit_event/{id}")
+    public String editEvent(NewEventDTO newEvent, @PathVariable long id) {
+        return service.editEvent(newEvent, id);
+    }
+
+    @DeleteMapping("/delete_event/{id}")
+    public String deleteEvent(@PathVariable long id) {
+        return service.deleteEvent(id);
+    }
 }

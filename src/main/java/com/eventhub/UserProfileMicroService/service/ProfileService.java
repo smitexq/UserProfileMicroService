@@ -26,6 +26,5 @@ public class ProfileService {
         Profile new_profile = new Profile(initProfile);
         System.out.println(initProfile.getUsername() + " " + initProfile.getId().toString() + " " + initProfile.getAge());
         repository.save(new_profile);
-        System.out.println(new_profile);
     }
 }
