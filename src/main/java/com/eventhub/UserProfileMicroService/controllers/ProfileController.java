@@ -1,8 +1,8 @@
 package com.eventhub.UserProfileMicroService.controllers;
 
-import com.eventhub.UserProfileMicroService.dto.InitProfileDTO;
-import com.eventhub.UserProfileMicroService.dto.ProfileDTO;
-import com.eventhub.UserProfileMicroService.service.ProfileService;
+import com.eventhub.UserProfileMicroService.dto.*;
+import com.eventhub.UserProfileMicroService.service.EventServiceImpl;
+import com.eventhub.UserProfileMicroService.service.ProfileServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,45 +10,48 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/profile-service")
 public class ProfileController {
 
-    private final ProfileService service;
-    public ProfileController(ProfileService service) {
-        this.service = service;
+    private final ProfileServiceImpl profileService;
+    private final EventServiceImpl eventSercice;
+
+    public ProfileController(ProfileServiceImpl profileService, EventServiceImpl eventSercice) {
+        this.profileService = profileService;
+        this.eventSercice = eventSercice;
     }
 
 
     @GetMapping("/get_profile")
-    public ResponseEntity<ProfileDTO> getProfile() {
-        return ResponseEntity.ok(service.getProfile());
+    public ResponseEntity<ProfileDTO> getProfile(@RequestBody String username) {
+        return ResponseEntity.ok(profileService.getProfile(username));
     }
 
     @PostMapping("/add_profile")
     public void addNewProfile(@RequestBody InitProfileDTO initProfile) {
         System.out.println("Получил");
-        service.addNewProfile(initProfile);
+        profileService.addNewProfile(initProfile);
     }
 
     @PostMapping("/create_event")
-    public String addNewEvent(NewEventDTO newEvent) {
-        return service.addNewEvent(newEvent);
+    public ResponseEntity<String> addNewEvent(@RequestBody String username, @RequestBody NewEventDTO newEvent) {
+        return ResponseEntity.ok(eventSercice.addNewEvent(username, newEvent));
+    }
+
+    @PutMapping("/edit_event")
+    public ResponseEntity<String> editEvent(@RequestBody NewEventDTO event) {
+        return ResponseEntity.ok(eventSercice.editEvent(event));
+    }
+
+    @DeleteMapping("/delete_event/{eventName}")
+    public String deleteEvent(@RequestBody String username, @PathVariable String eventName) {
+        return eventSercice.deleteEvent(username, eventName);
     }
 
     @GetMapping("/my_events") //События которые создал пользователь
-    public ResponseEntity<EventsDTO> getEventsPerUser() {
-        return service.getEventsPerUser();
+    public ResponseEntity<EventsDTO> getEventsPerUser(@RequestBody String username) {
+        return ResponseEntity.ok(profileService.getEventsPerUser(username));
     }
 
     @GetMapping("/my_activities") //события на которые пользователь записан
-    public ResponseEntity<ActivitiesDTO> getActivitiesPerUser() {
-        return service.getActivitiesPerUser();
-    }
-
-    @PutMapping("/edit_event/{id}")
-    public String editEvent(NewEventDTO newEvent, @PathVariable long id) {
-        return service.editEvent(newEvent, id);
-    }
-
-    @DeleteMapping("/delete_event/{id}")
-    public String deleteEvent(@PathVariable long id) {
-        return service.deleteEvent(id);
+    public ResponseEntity<ActivitiesDTO> getActivitiesPerUser(@RequestBody String username) {
+        return ResponseEntity.ok(profileService.getActivitiesPerUser(username));
     }
 }
