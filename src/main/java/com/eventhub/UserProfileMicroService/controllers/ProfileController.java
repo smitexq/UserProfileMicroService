@@ -6,6 +6,8 @@ import com.eventhub.UserProfileMicroService.service.ProfileServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/profile-service")
 public class ProfileController {
@@ -19,8 +21,8 @@ public class ProfileController {
     }
 
 
-    @GetMapping("/get_profile")
-    public ResponseEntity<ProfileDTO> getProfile(@RequestBody String username) {
+    @GetMapping("/get_profile/{username}") //информация о профиле самого пользователя
+    public ResponseEntity<ProfileDTO> getProfile(@PathVariable String username) {
         return ResponseEntity.ok(profileService.getProfile(username));
     }
 
@@ -30,8 +32,8 @@ public class ProfileController {
         profileService.addNewProfile(initProfile);
     }
 
-    @PostMapping("/create_event")
-    public ResponseEntity<String> addNewEvent(@RequestBody String username, @RequestBody NewEventDTO newEvent) {
+    @PostMapping("/create_event/{username}")
+    public ResponseEntity<String> addNewEvent(@PathVariable String username, @RequestBody NewEventDTO newEvent) {
         return ResponseEntity.ok(eventSercice.addNewEvent(username, newEvent));
     }
 
@@ -45,8 +47,8 @@ public class ProfileController {
         return eventSercice.deleteEvent(username, eventName);
     }
 
-    @GetMapping("/my_events") //События которые создал пользователь
-    public ResponseEntity<EventsDTO> getEventsPerUser(@RequestBody String username) {
+    @GetMapping("/my_events/{username}") //События которые создал пользователь
+    public ResponseEntity<List<EventsDTO>> getEventsPerUser(@PathVariable String username) {
         return ResponseEntity.ok(profileService.getEventsPerUser(username));
     }
 

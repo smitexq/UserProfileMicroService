@@ -20,9 +20,9 @@ public class Event {
     //todo: Поля с количеством участников (их имена) И до какого числа событие И когда событие
 
     @ManyToMany(mappedBy = "events")
-    private ArrayList<Profile> participants = new ArrayList<>();
+    private List<Profile> participants = new ArrayList<>();
 
-
+    public Event() {}
     public Event(String name, String description, List<String> tags, int max_people, Profile author) {
         this.name = name;
         this.description = description;
@@ -38,14 +38,23 @@ public class Event {
         this.tags = tags;
     }
 
+    public String getName() {
+        return name;
+    }
     public void setName(String name) {
         this.name = name;
     }
 
+    public String getDescription() {
+        return description;
+    }
     public void setDescription(String description) {
         this.description = description;
     }
 
+    public int getMax_people() {
+        return max_people;
+    }
     public void setMax_people(int max_people) {
         this.max_people = max_people;
     }

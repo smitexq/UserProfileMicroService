@@ -5,9 +5,11 @@ import com.eventhub.UserProfileMicroService.dto.EventsDTO;
 import com.eventhub.UserProfileMicroService.dto.InitProfileDTO;
 import com.eventhub.UserProfileMicroService.dto.ProfileDTO;
 
+import java.util.List;
+
 public interface ProfileService {
     ProfileDTO getProfile(String username);
     void addNewProfile(InitProfileDTO initProfile);
-    EventsDTO getEventsPerUser(String username);
+    List<EventsDTO> getEventsPerUser(String username);
     ActivitiesDTO getActivitiesPerUser(String username);
 }

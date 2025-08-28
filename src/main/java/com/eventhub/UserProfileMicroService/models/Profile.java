@@ -36,7 +36,16 @@ public class Profile {
         return "Пользователь " + username + " был сохранен";
     }
 
+
     public String getUsername() {
         return username;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public List<Event> getEvents() {
+        return events;
     }
 }

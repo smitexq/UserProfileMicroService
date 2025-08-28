@@ -11,4 +11,35 @@ public class EventsDTO {
     //todo: Поля с количеством участников (их имена) И до какого числа событие
 
 
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public int getMax_people() {
+        return max_people;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
+    public void setMax_people(int max_people) {
+        this.max_people = max_people;
+    }
 }

@@ -1,27 +1,39 @@
 package com.eventhub.UserProfileMicroService.service;
 
+import com.eventhub.UserProfileMicroService.dao.EventRepository;
 import com.eventhub.UserProfileMicroService.dao.ProfileRepository;
 import com.eventhub.UserProfileMicroService.dto.ActivitiesDTO;
 import com.eventhub.UserProfileMicroService.dto.EventsDTO;
 import com.eventhub.UserProfileMicroService.dto.InitProfileDTO;
 import com.eventhub.UserProfileMicroService.dto.ProfileDTO;
+import com.eventhub.UserProfileMicroService.dto.mappers.EventMapper;
+import com.eventhub.UserProfileMicroService.dto.mappers.ProfileMapper;
 import com.eventhub.UserProfileMicroService.models.Profile;
-import com.eventhub.UserProfileMicroService.security.UserDetailsImpl;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileRepository profileRepo;
-    public ProfileServiceImpl(ProfileRepository profileRepo) {
+    private final ProfileMapper profileMapper;
+    private final EventRepository eventRepo;
+    private final EventMapper eventMapper;
+
+    public ProfileServiceImpl(ProfileRepository profileRepo, ProfileMapper profileMapper, EventRepository eventRepo, EventMapper eventMapper) {
         this.profileRepo = profileRepo;
+        this.profileMapper = profileMapper;
+        this.eventRepo = eventRepo;
+        this.eventMapper = eventMapper;
     }
 
     @Override
     public ProfileDTO getProfile(String username) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return null;
+        //Пользователь точно есть, так как username передается при проверке jwt ключа в ApiGateway
+        return profileMapper.toDTO(
+                profileRepo.findByUsername(username).get()
+        );
     }
 
     @Override
@@ -32,8 +44,21 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public EventsDTO getEventsPerUser(String username) {
-        return null;
+    public List<EventsDTO> getEventsPerUser(String username) {
+//        Profile profile = profileRepo.findByUsername(username).get();
+
+//        Predicate<Event> predicate = new Predicate<Event>() {
+//            @Override
+//            public boolean test(Event event) {
+//                return event.getAuthor().equals(profile);
+//            }
+//        };
+
+        return eventRepo.findAll()
+                .stream()
+                .filter(e -> e.getAuthor().getUsername().equals(username))
+                .map(e -> eventMapper.toDTO(e))
+                .toList();
     }
 
     @Override
