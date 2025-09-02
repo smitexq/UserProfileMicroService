@@ -31,6 +31,10 @@ public class Event {
         this.author = author;
     }
 
+    public void addMember(Profile profile) {
+        participants.add(profile);
+    }
+
     public List<String> getTags() {
         return tags;
     }
@@ -61,5 +65,9 @@ public class Event {
 
     public Profile getAuthor() {
         return author;
+    }
+
+    public List<Profile> getParticipants() {
+        return participants;
     }
 }

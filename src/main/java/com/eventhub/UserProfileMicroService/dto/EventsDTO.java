@@ -8,6 +8,8 @@ public class EventsDTO {
     private List<String> tags;
     private int max_people;
 
+    private List<String> members;
+
     //todo: Поля с количеством участников (их имена) И до какого числа событие
 
 
@@ -41,5 +43,13 @@ public class EventsDTO {
 
     public void setMax_people(int max_people) {
         this.max_people = max_people;
+    }
+
+    public List<String> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<String> members) {
+        this.members = members;
     }
 }

@@ -100,4 +100,28 @@ public class EventServiceImpl implements EventService{
         eventRepo.delete(event.get());
         return "Событие было удалено";
     }
+
+    @Override
+    public String signUpOnEvent(String username, String eventName) {
+        Optional<Profile> user = profileRepo.findByUsername(username);
+        if (user.isEmpty()) return "Пользователь не найден";
+
+        Optional<Event> event = eventRepo.findByName(eventName);
+
+        if (event.isPresent()) {
+            String author_name = event.get().getAuthor().getUsername();
+            if (author_name.equals(username)) return "Вы пытаетесь записаться на свое мероприятие";
+            if (event.get().getParticipants().size() >= event.get().getMax_people()) return "Больше нет мест на запись";
+
+            event.get().addMember(
+                    user.get()
+            );
+
+            eventRepo.save(event.get());
+
+            return String.format("Вы успешно записались на мероприятие %s", eventName);
+        }
+
+        return "Неизвестное мероприятие";
+    }
 }

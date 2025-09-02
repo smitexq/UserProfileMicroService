@@ -42,9 +42,14 @@ public class ProfileController {
         return ResponseEntity.ok(eventSercice.editEvent(event));
     }
 
-    @DeleteMapping("/delete_event/{eventName}")
-    public String deleteEvent(@RequestBody String username, @PathVariable String eventName) {
-        return eventSercice.deleteEvent(username, eventName);
+    @DeleteMapping("/delete_event/")
+    public ResponseEntity<String> deleteEvent(@RequestParam String username, @RequestParam String eventName) {
+        return ResponseEntity.ok(eventSercice.deleteEvent(username, eventName));
+    }
+
+    @PutMapping("/sign_up_on_event/") //запись на событие
+    public ResponseEntity<String> signUpOnEvent(@RequestParam String username, @RequestParam String eventName) {
+        return ResponseEntity.ok(eventSercice.signUpOnEvent(username, eventName));
     }
 
     @GetMapping("/my_events/{username}") //События которые создал пользователь

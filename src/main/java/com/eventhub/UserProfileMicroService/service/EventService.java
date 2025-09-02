@@ -6,4 +6,5 @@ public interface EventService {
     String addNewEvent(String username, NewEventDTO newEvent);
     String editEvent(NewEventDTO newEvent);
     String deleteEvent(String username, String eventName);
+    String signUpOnEvent(String username, String eventName);
 }
