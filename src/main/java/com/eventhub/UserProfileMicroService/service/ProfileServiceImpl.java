@@ -6,6 +6,7 @@ import com.eventhub.UserProfileMicroService.dto.ActivitiesDTO;
 import com.eventhub.UserProfileMicroService.dto.EventsDTO;
 import com.eventhub.UserProfileMicroService.dto.InitProfileDTO;
 import com.eventhub.UserProfileMicroService.dto.ProfileDTO;
+import com.eventhub.UserProfileMicroService.dto.mappers.EventMap;
 import com.eventhub.UserProfileMicroService.dto.mappers.EventMapper;
 import com.eventhub.UserProfileMicroService.dto.mappers.ProfileMapper;
 import com.eventhub.UserProfileMicroService.models.Profile;
@@ -19,13 +20,13 @@ public class ProfileServiceImpl implements ProfileService {
     private final ProfileRepository profileRepo;
     private final ProfileMapper profileMapper;
     private final EventRepository eventRepo;
-    private final EventMapper eventMapper;
+    private final EventMap eventMap;
 
-    public ProfileServiceImpl(ProfileRepository profileRepo, ProfileMapper profileMapper, EventRepository eventRepo, EventMapper eventMapper) {
+    public ProfileServiceImpl(ProfileRepository profileRepo, ProfileMapper profileMapper, EventRepository eventRepo, EventMap eventMap) {
         this.profileRepo = profileRepo;
         this.profileMapper = profileMapper;
         this.eventRepo = eventRepo;
-        this.eventMapper = eventMapper;
+        this.eventMap = eventMap;
     }
 
     @Override
@@ -45,19 +46,10 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public List<EventsDTO> getEventsPerUser(String username) {
-//        Profile profile = profileRepo.findByUsername(username).get();
-
-//        Predicate<Event> predicate = new Predicate<Event>() {
-//            @Override
-//            public boolean test(Event event) {
-//                return event.getAuthor().equals(profile);
-//            }
-//        };
-
         return eventRepo.findAll()
                 .stream()
                 .filter(e -> e.getAuthor().getUsername().equals(username))
-                .map(e -> eventMapper.toDTO(e))
+                .map(eventMap::toDTO)
                 .toList();
     }
 

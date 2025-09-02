@@ -106,18 +106,22 @@ public class EventServiceImpl implements EventService{
         Optional<Profile> user = profileRepo.findByUsername(username);
         if (user.isEmpty()) return "Пользователь не найден";
 
-        Optional<Event> event = eventRepo.findByName(eventName);
+        Optional<Event> var_event = eventRepo.findByName(eventName);
 
-        if (event.isPresent()) {
-            String author_name = event.get().getAuthor().getUsername();
+        if (var_event.isPresent()) {
+            Event event = var_event.get();
+            String author_name = event.getAuthor().getUsername();
+
             if (author_name.equals(username)) return "Вы пытаетесь записаться на свое мероприятие";
-            if (event.get().getParticipants().size() >= event.get().getMax_people()) return "Больше нет мест на запись";
+            if (event.getParticipants().size() >= event.getMax_people()) return "Больше нет мест на запись";
 
-            event.get().addMember(
+            event.addMember(
                     user.get()
             );
 
-            eventRepo.save(event.get());
+            System.out.println(event.getParticipants().toString());
+
+            eventRepo.save(event);
 
             return String.format("Вы успешно записались на мероприятие %s", eventName);
         }

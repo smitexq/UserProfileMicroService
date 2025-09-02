@@ -33,7 +33,7 @@ public class Profile {
 
     @Override
     public String toString() {
-        return "Пользователь " + username + " был сохранен";
+        return "Пользователь " + username;
     }
 
 

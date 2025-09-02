@@ -33,6 +33,7 @@ public class Event {
 
     public void addMember(Profile profile) {
         participants.add(profile);
+        profile.getEvents().add(this);
     }
 
     public List<String> getTags() {
