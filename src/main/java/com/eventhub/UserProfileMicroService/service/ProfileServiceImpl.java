@@ -6,6 +6,7 @@ import com.eventhub.UserProfileMicroService.dto.ActivitiesDTO;
 import com.eventhub.UserProfileMicroService.dto.EventsDTO;
 import com.eventhub.UserProfileMicroService.dto.InitProfileDTO;
 import com.eventhub.UserProfileMicroService.dto.ProfileDTO;
+import com.eventhub.UserProfileMicroService.dto.mappers.ActivitiesMapper;
 import com.eventhub.UserProfileMicroService.dto.mappers.EventMap;
 import com.eventhub.UserProfileMicroService.dto.mappers.ProfileMapper;
 import com.eventhub.UserProfileMicroService.models.Profile;
@@ -20,12 +21,14 @@ public class ProfileServiceImpl implements ProfileService {
     private final ProfileMapper profileMapper;
     private final EventRepository eventRepo;
     private final EventMap eventMap;
+    private final ActivitiesMapper activitiesMap;
 
-    public ProfileServiceImpl(ProfileRepository profileRepo, ProfileMapper profileMapper, EventRepository eventRepo, EventMap eventMap) {
+    public ProfileServiceImpl(ProfileRepository profileRepo, ProfileMapper profileMapper, EventRepository eventRepo, EventMap eventMap, ActivitiesMapper activitiesMap) {
         this.profileRepo = profileRepo;
         this.profileMapper = profileMapper;
         this.eventRepo = eventRepo;
         this.eventMap = eventMap;
+        this.activitiesMap = activitiesMap;
     }
 
     @Override
@@ -53,7 +56,14 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public ActivitiesDTO getActivitiesPerUser(String username) {
-        return null;
+    public List<ActivitiesDTO> getActivitiesPerUser(String username) {
+        Profile profile = profileRepo.findByUsername(username).get();
+
+        return eventRepo.findAll()
+                .stream()
+                .filter(event -> event.getParticipants()
+                        .contains(profile))
+                .map(e -> activitiesMap.toDTO(e))
+                .toList();
     }
 }

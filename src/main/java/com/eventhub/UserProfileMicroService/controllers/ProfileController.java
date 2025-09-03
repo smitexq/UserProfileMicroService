@@ -2,9 +2,7 @@ package com.eventhub.UserProfileMicroService.controllers;
 
 import com.eventhub.UserProfileMicroService.dto.*;
 import com.eventhub.UserProfileMicroService.service.EventService;
-import com.eventhub.UserProfileMicroService.service.EventServiceImpl;
 import com.eventhub.UserProfileMicroService.service.ProfileService;
-import com.eventhub.UserProfileMicroService.service.ProfileServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,8 +61,8 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.getEventsPerUser(username));
     }
 
-    @GetMapping("/my_activities") //события на которые пользователь записан
-    public ResponseEntity<ActivitiesDTO> getActivitiesPerUser(@RequestBody String username) {
+    @GetMapping("/my_activities/{username}") //события на которые пользователь записан
+    public ResponseEntity<List<ActivitiesDTO>> getActivitiesPerUser(@PathVariable String username) {
         return ResponseEntity.ok(profileService.getActivitiesPerUser(username));
     }
 }

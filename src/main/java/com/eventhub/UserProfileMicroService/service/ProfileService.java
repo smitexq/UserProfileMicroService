@@ -11,5 +11,5 @@ public interface ProfileService {
     ProfileDTO getProfile(String username);
     void addNewProfile(InitProfileDTO initProfile);
     List<EventsDTO> getEventsPerUser(String username);
-    ActivitiesDTO getActivitiesPerUser(String username);
+    List<ActivitiesDTO> getActivitiesPerUser(String username);
 }
