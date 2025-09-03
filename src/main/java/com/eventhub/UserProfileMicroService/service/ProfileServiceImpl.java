@@ -7,7 +7,6 @@ import com.eventhub.UserProfileMicroService.dto.EventsDTO;
 import com.eventhub.UserProfileMicroService.dto.InitProfileDTO;
 import com.eventhub.UserProfileMicroService.dto.ProfileDTO;
 import com.eventhub.UserProfileMicroService.dto.mappers.EventMap;
-import com.eventhub.UserProfileMicroService.dto.mappers.EventMapper;
 import com.eventhub.UserProfileMicroService.dto.mappers.ProfileMapper;
 import com.eventhub.UserProfileMicroService.models.Profile;
 import org.springframework.stereotype.Service;

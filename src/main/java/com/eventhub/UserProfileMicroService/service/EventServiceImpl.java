@@ -83,23 +83,26 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public String deleteEvent(String username, String eventName) {
+    public String deleteEvent(String owner_username, String eventName) {
         //username нужен для проверки того, что событие создал именно этот человек
-        Optional<Profile> author = profileRepo.findByUsername(username);
+        Optional<Profile> author = profileRepo.findByUsername(owner_username);
         if (author.isEmpty()) return "Неизвестный пользователь";
 
         //Поиск в бд
-        Optional<Event> event = eventRepo.findByName(eventName);
-        if (event.isEmpty()) return "Неизвестное событие";
+        Optional<Event> var_event = eventRepo.findByName(eventName);
+        if (var_event.isEmpty()) return "Неизвестное событие";
+        Event event = var_event.get();
 
 
         if (!author.get().equals(
-                event.get().getAuthor())
+                event.getAuthor())
         ) return "Вы не являетесь создателем этого события";
 
-        eventRepo.delete(event.get());
+        eventRepo.delete(event);
+
         return "Событие было удалено";
     }
+
 
     @Override
     public String signUpOnEvent(String username, String eventName) {
@@ -113,17 +116,38 @@ public class EventServiceImpl implements EventService{
             String author_name = event.getAuthor().getUsername();
 
             if (author_name.equals(username)) return "Вы пытаетесь записаться на свое мероприятие";
+            if (event.getParticipants().contains(user.get())) return String.format("Вы уже зарегестрированы на событие %s", eventName);
+//            if (user.get().getEvents().contains(event))
             if (event.getParticipants().size() >= event.getMax_people()) return "Больше нет мест на запись";
 
             event.addMember(
                     user.get()
             );
 
-            System.out.println(event.getParticipants().toString());
-
             eventRepo.save(event);
 
             return String.format("Вы успешно записались на мероприятие %s", eventName);
+        }
+
+        return "Неизвестное мероприятие";
+    }
+
+
+    @Override
+    public String leaveFromEvent(String username, String eventName) {
+        Optional<Profile> var_user = profileRepo.findByUsername(username);
+
+        if (var_user.isEmpty()) return "Пользователь не найден";
+        Profile user = var_user.get();
+
+        Optional<Event> var_event = eventRepo.findByName(eventName);
+        if (var_event.isPresent()) {
+            if (!user.getEvents().contains(var_event.get())) return String.format("Вы не участвуете в мероприятии %s", eventName);
+
+            var_event.get().removeMember(user);
+
+            eventRepo.save(var_event.get());
+            return String.format("Вы покинули мероприятие %s", eventName);
         }
 
         return "Неизвестное мероприятие";

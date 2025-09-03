@@ -1,7 +1,9 @@
 package com.eventhub.UserProfileMicroService.controllers;
 
 import com.eventhub.UserProfileMicroService.dto.*;
+import com.eventhub.UserProfileMicroService.service.EventService;
 import com.eventhub.UserProfileMicroService.service.EventServiceImpl;
+import com.eventhub.UserProfileMicroService.service.ProfileService;
 import com.eventhub.UserProfileMicroService.service.ProfileServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +14,10 @@ import java.util.List;
 @RequestMapping("/profile-service")
 public class ProfileController {
 
-    private final ProfileServiceImpl profileService;
-    private final EventServiceImpl eventSercice;
+    private final ProfileService profileService;
+    private final EventService eventSercice;
 
-    public ProfileController(ProfileServiceImpl profileService, EventServiceImpl eventSercice) {
+    public ProfileController(ProfileService profileService, EventService eventSercice) {
         this.profileService = profileService;
         this.eventSercice = eventSercice;
     }
@@ -50,6 +52,10 @@ public class ProfileController {
     @PutMapping("/sign_up_on_event/") //запись на событие
     public ResponseEntity<String> signUpOnEvent(@RequestParam String username, @RequestParam String eventName) {
         return ResponseEntity.ok(eventSercice.signUpOnEvent(username, eventName));
+    }
+    @PutMapping("/leave_from_event/") //покинуть событие
+    public ResponseEntity<String> leaveFromEvent(@RequestParam String username, @RequestParam String eventName) {
+        return ResponseEntity.ok(eventSercice.leaveFromEvent(username, eventName));
     }
 
     @GetMapping("/my_events/{username}") //События которые создал пользователь

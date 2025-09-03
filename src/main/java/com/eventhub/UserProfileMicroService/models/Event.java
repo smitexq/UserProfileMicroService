@@ -36,6 +36,20 @@ public class Event {
         profile.getEvents().add(this);
     }
 
+    @PreRemove //срабатывает перед eventRepo.delete(e)
+    public void removeMembers() {
+        this.participants
+                .forEach(user -> user.getEvents().remove(this)
+                );
+    }
+
+    public void removeMember(Profile profile) {
+        this.participants.remove(profile);
+        profile.getEvents().remove(this);
+    }
+
+
+
     public List<String> getTags() {
         return tags;
     }
