@@ -1,14 +1,31 @@
 package com.eventhub.UserProfileMicroService.dto.mappers;
 
 import com.eventhub.UserProfileMicroService.dto.ProfileDTO;
+import com.eventhub.UserProfileMicroService.models.Event;
 import com.eventhub.UserProfileMicroService.models.Profile;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public interface ProfileMapper {
+import java.util.List;
 
-    @Mapping(source = "events", target = "take_part_events")
-    ProfileDTO toDTO(Profile profile);
+@Component
+public class ProfileMapper {
+
+    public ProfileDTO toDTO(Profile profile) {
+        if (profile == null) return null;
+
+        ProfileDTO profileDTO = new ProfileDTO(
+                profile.getUsername(),
+                profile.getAge()
+        );
+
+        List<Event> profile_events = profile.getEvents();
+        if (!profile_events.isEmpty()) {
+            profileDTO.setTake_part_events(profile_events.stream()
+                    .map(x -> x.getName())
+                    .toList()
+            );
+        }
+
+        return profileDTO;
+    }
 }

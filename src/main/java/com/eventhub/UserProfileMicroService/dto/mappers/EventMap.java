@@ -27,7 +27,7 @@ public class EventMap {
 
         List<Profile> members = event.getParticipants();
         if ( members != null ) {
-            eventsDTO.setMembers( new ArrayList<String>(members.stream()
+            eventsDTO.setMembers( new ArrayList<>(members.stream()
                     .map(x -> x.getUsername())
                     .toList()) );
         }

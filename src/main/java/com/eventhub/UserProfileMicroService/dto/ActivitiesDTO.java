@@ -5,7 +5,7 @@ import com.eventhub.UserProfileMicroService.models.Profile;
 import java.util.List;
 
 public class ActivitiesDTO {
-    private Profile author;
+    private String author;
 
     private String name;
     private String description;
@@ -14,11 +14,11 @@ public class ActivitiesDTO {
     //todo: когда событие и до какого числа
 
 
-    public Profile getAuthor() {
+    public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(Profile author) {
+    public void setAuthor(String author) {
         this.author = author;
     }
 
