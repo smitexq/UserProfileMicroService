@@ -2,6 +2,7 @@ package com.eventhub.UserProfileMicroService.models;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,18 +18,19 @@ public class Event {
     private String description;
     private List<String> tags;
     private int max_people;
-    //todo: Поля с количеством участников (их имена) И до какого числа событие И когда событие
+    private LocalDateTime time_of_event;
 
     @ManyToMany(mappedBy = "events")
-    private List<Profile> participants = new ArrayList<>();
+    private final List<Profile> participants = new ArrayList<>();
 
     public Event() {}
-    public Event(String name, String description, List<String> tags, int max_people, Profile author) {
+    public Event(String name, String description, List<String> tags, int max_people, Profile author, LocalDateTime time_of_event) {
         this.name = name;
         this.description = description;
         this.tags = tags;
         this.max_people = max_people;
         this.author = author;
+        this.time_of_event = time_of_event;
     }
 
     public void addMember(Profile profile) {
@@ -84,5 +86,9 @@ public class Event {
 
     public List<Profile> getParticipants() {
         return participants;
+    }
+
+    public LocalDateTime getTime_of_event() {
+        return time_of_event;
     }
 }

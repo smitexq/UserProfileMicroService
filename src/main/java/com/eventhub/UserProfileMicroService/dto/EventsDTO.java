@@ -1,5 +1,6 @@
 package com.eventhub.UserProfileMicroService.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class EventsDTO {
@@ -7,10 +8,9 @@ public class EventsDTO {
     private String description;
     private List<String> tags;
     private int max_people;
+    private LocalDateTime time_of_event;
 
     private List<String> members;
-
-    //todo: Поля с количеством участников (их имена) И до какого числа событие
 
 
     public String getName() {
@@ -51,5 +51,13 @@ public class EventsDTO {
 
     public void setMembers(List<String> members) {
         this.members = members;
+    }
+
+    public LocalDateTime getTime_of_event() {
+        return time_of_event;
+    }
+
+    public void setTime_of_event(LocalDateTime time_of_event) {
+        this.time_of_event = time_of_event;
     }
 }

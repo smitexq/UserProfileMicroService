@@ -1,7 +1,6 @@
 package com.eventhub.UserProfileMicroService.dto;
 
-import com.eventhub.UserProfileMicroService.models.Profile;
-
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ActivitiesDTO {
@@ -10,8 +9,7 @@ public class ActivitiesDTO {
     private String name;
     private String description;
     private List<String> tags;
-
-    //todo: когда событие и до какого числа
+    private LocalDateTime time_of_event;
 
 
     public String getAuthor() {
@@ -44,5 +42,13 @@ public class ActivitiesDTO {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public LocalDateTime getTime_of_event() {
+        return time_of_event;
+    }
+
+    public void setTime_of_event(LocalDateTime time_of_event) {
+        this.time_of_event = time_of_event;
     }
 }

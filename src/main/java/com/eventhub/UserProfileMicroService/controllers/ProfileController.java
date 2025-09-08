@@ -28,7 +28,6 @@ public class ProfileController {
 
     @PostMapping("/add_profile")
     public void addNewProfile(@RequestBody InitProfileDTO initProfile) {
-        System.out.println("Получил");
         profileService.addNewProfile(initProfile);
     }
 

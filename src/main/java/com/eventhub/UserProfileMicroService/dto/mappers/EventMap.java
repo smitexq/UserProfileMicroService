@@ -19,6 +19,7 @@ public class EventMap {
         eventsDTO.setName( event.getName() );
         eventsDTO.setDescription( event.getDescription() );
         eventsDTO.setMax_people( event.getMax_people() );
+        eventsDTO.setTime_of_event( event.getTime_of_event());
 
         List<String> list = event.getTags();
         if ( list != null ) {

@@ -13,6 +13,7 @@ public class Profile {
 //    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String username;
+    private String email;
     private int age;
 
     @ManyToMany
@@ -28,6 +29,7 @@ public class Profile {
     public Profile(InitProfileDTO profile) {
         this.id = profile.getId();
         this.username = profile.getUsername();
+        this.email = profile.getEmail();
         this.age = profile.getAge();
     }
 
@@ -47,5 +49,9 @@ public class Profile {
 
     public List<Event> getEvents() {
         return events;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }

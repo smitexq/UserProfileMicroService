@@ -42,7 +42,6 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public void addNewProfile(InitProfileDTO initProfile) {
         Profile new_profile = new Profile(initProfile);
-        System.out.println(initProfile.getUsername() + " " + initProfile.getId().toString() + " " + initProfile.getAge());
         profileRepo.save(new_profile);
     }
 

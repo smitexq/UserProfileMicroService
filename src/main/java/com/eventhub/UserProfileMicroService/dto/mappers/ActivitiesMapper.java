@@ -17,6 +17,7 @@ public class ActivitiesMapper {
         activity.setAuthor(event.getAuthor().getUsername());
         activity.setName(event.getName());
         activity.setDescription(event.getDescription());
+        activity.setTime_of_event(event.getTime_of_event());
 
         List<String> tags = event.getTags();
         if (tags != null) {

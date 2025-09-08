@@ -5,9 +5,14 @@ import com.eventhub.UserProfileMicroService.dao.ProfileRepository;
 import com.eventhub.UserProfileMicroService.dto.NewEventDTO;
 import com.eventhub.UserProfileMicroService.models.Event;
 import com.eventhub.UserProfileMicroService.models.Profile;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -15,10 +20,12 @@ public class EventServiceImpl implements EventService{
 
     private final EventRepository eventRepo;
     private final ProfileRepository profileRepo;
+    private final WebClient webClient;
 
-    public EventServiceImpl(EventRepository eventRepo, ProfileRepository profileRepo) {
+    public EventServiceImpl(EventRepository eventRepo, ProfileRepository profileRepo, WebClient webClient) {
         this.eventRepo = eventRepo;
         this.profileRepo = profileRepo;
+        this.webClient = webClient;
     }
 
 
@@ -26,6 +33,7 @@ public class EventServiceImpl implements EventService{
     public String addNewEvent(String username, NewEventDTO newEvent) {
         String name = newEvent.getName();
         String desc = newEvent.getDescription();
+        LocalDateTime time = newEvent.getTime_of_event();
         ArrayList<String> tags = (ArrayList<String>) newEvent.getTags();
         int people = newEvent.getMax_people();
 
@@ -43,7 +51,8 @@ public class EventServiceImpl implements EventService{
                 desc,
                 tags,
                 people,
-                profileRepo.findByUsername(username).get()
+                profileRepo.findByUsername(username).get(),
+                time
         );
         eventRepo.save(event);
         return "Событие зарегистрировано!";
@@ -125,6 +134,22 @@ public class EventServiceImpl implements EventService{
             );
 
             eventRepo.save(event);
+
+            //Запрос на Mail. Добавить почту, username, названия события и время в Mail, чтобы там каждую минуту проверялось кого уведомить
+            webClient.post()
+                    .uri("/mail-service/reminder")
+                    .bodyValue(Map.of(
+                                    "username", username,
+                                    "email", user.get().getEmail(),
+                                    "event_name", eventName,
+                                    "time", event.getTime_of_event().toString()
+                            )
+                    )
+                    .retrieve()
+                    .toBodilessEntity()
+                    .subscribe(success -> {},
+                            error -> System.err.println("Ошибка отправки письма: " + error.getMessage())
+                    );
 
             return String.format("Вы успешно записались на мероприятие %s", eventName);
         }
