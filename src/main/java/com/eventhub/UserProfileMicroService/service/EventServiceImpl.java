@@ -5,13 +5,10 @@ import com.eventhub.UserProfileMicroService.dao.ProfileRepository;
 import com.eventhub.UserProfileMicroService.dto.NewEventDTO;
 import com.eventhub.UserProfileMicroService.models.Event;
 import com.eventhub.UserProfileMicroService.models.Profile;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -20,12 +17,12 @@ public class EventServiceImpl implements EventService{
 
     private final EventRepository eventRepo;
     private final ProfileRepository profileRepo;
-    private final WebClient webClient;
+    private final MailService mailService;
 
-    public EventServiceImpl(EventRepository eventRepo, ProfileRepository profileRepo, WebClient webClient) {
+    public EventServiceImpl(EventRepository eventRepo, ProfileRepository profileRepo, MailService mailService) {
         this.eventRepo = eventRepo;
         this.profileRepo = profileRepo;
-        this.webClient = webClient;
+        this.mailService = mailService;
     }
 
 
@@ -107,6 +104,19 @@ public class EventServiceImpl implements EventService{
                 event.getAuthor())
         ) return "Вы не являетесь создателем этого события";
 
+        //Очищаем связи (удаляем всех из события)
+        event.getParticipants().forEach(user -> {
+            user.getEvents().remove(event);
+            //Запрос на удаления уведомления
+            mailService.sendPostRequestWithNoResponse(
+                    "/mail-service/remove_notification",
+                    Map.of(
+                            "username", user.getUsername(),
+                            "event_name", eventName
+                    )
+            );}
+        );
+        //Удаляем мероприятия
         eventRepo.delete(event);
 
         return "Событие было удалено";
@@ -136,20 +146,15 @@ public class EventServiceImpl implements EventService{
             eventRepo.save(event);
 
             //Запрос на Mail. Добавить почту, username, названия события и время в Mail, чтобы там каждую минуту проверялось кого уведомить
-            webClient.post()
-                    .uri("/mail-service/reminder")
-                    .bodyValue(Map.of(
-                                    "username", username,
-                                    "email", user.get().getEmail(),
-                                    "event_name", eventName,
-                                    "time", event.getTime_of_event().toString()
-                            )
+            mailService.sendPostRequestWithNoResponse(
+                    "/mail-service/reminder",
+                    Map.of(
+                            "username", username,
+                            "email", user.get().getEmail(),
+                            "event_name", eventName,
+                            "time", event.getTime_of_event().toString()
                     )
-                    .retrieve()
-                    .toBodilessEntity()
-                    .subscribe(success -> {},
-                            error -> System.err.println("Ошибка отправки письма: " + error.getMessage())
-                    );
+            );
 
             return String.format("Вы успешно записались на мероприятие %s", eventName);
         }
@@ -172,6 +177,16 @@ public class EventServiceImpl implements EventService{
             var_event.get().removeMember(user);
 
             eventRepo.save(var_event.get());
+
+            //Запрос на удаления уведомления
+            mailService.sendPostRequestWithNoResponse(
+                    "/mail-service/remove_notification",
+                    Map.of(
+                            "username", user.getUsername(),
+                            "event_name", eventName
+                    )
+            );
+
             return String.format("Вы покинули мероприятие %s", eventName);
         }
 
