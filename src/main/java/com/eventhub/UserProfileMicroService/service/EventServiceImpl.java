@@ -2,15 +2,19 @@ package com.eventhub.UserProfileMicroService.service;
 
 import com.eventhub.UserProfileMicroService.dao.EventRepository;
 import com.eventhub.UserProfileMicroService.dao.ProfileRepository;
+import com.eventhub.UserProfileMicroService.dto.EventsDTO;
 import com.eventhub.UserProfileMicroService.dto.NewEventDTO;
+import com.eventhub.UserProfileMicroService.dto.mappers.EventMap;
 import com.eventhub.UserProfileMicroService.models.Event;
 import com.eventhub.UserProfileMicroService.models.Profile;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EventServiceImpl implements EventService{
@@ -18,13 +22,24 @@ public class EventServiceImpl implements EventService{
     private final EventRepository eventRepo;
     private final ProfileRepository profileRepo;
     private final MailService mailService;
+    private final EventMap eventMapper;
 
-    public EventServiceImpl(EventRepository eventRepo, ProfileRepository profileRepo, MailService mailService) {
+    public EventServiceImpl(EventRepository eventRepo, ProfileRepository profileRepo, MailService mailService, EventMap eventMapper) {
         this.eventRepo = eventRepo;
         this.profileRepo = profileRepo;
         this.mailService = mailService;
+        this.eventMapper = eventMapper;
     }
 
+
+    @Override
+    public List<EventsDTO> getAllEvents() {
+        return eventRepo.findAll()
+                .stream()
+                .filter(event -> event.getParticipants().size() < event.getMax_people()) //только события, в которых еще есть места
+                .map(event -> eventMapper.toDTO(event))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public String addNewEvent(String username, NewEventDTO newEvent) {

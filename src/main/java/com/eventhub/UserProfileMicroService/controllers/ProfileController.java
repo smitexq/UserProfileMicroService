@@ -64,4 +64,10 @@ public class ProfileController {
     public ResponseEntity<List<ActivitiesDTO>> getActivitiesPerUser(@PathVariable String username) {
         return ResponseEntity.ok(profileService.getActivitiesPerUser(username));
     }
+
+
+    @GetMapping("/all_events")
+    public List<EventsDTO> getAllEvents() {
+        return eventSercice.getAllEvents();
+    }
 }
