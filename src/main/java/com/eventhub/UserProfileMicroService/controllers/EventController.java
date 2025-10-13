@@ -1,5 +1,6 @@
 package com.eventhub.UserProfileMicroService.controllers;
 
+import com.eventhub.UserProfileMicroService.dto.ApiResponse;
 import com.eventhub.UserProfileMicroService.dto.EventsDTO;
 import com.eventhub.UserProfileMicroService.dto.NewEventDTO;
 import com.eventhub.UserProfileMicroService.service.EventService;
@@ -34,9 +35,14 @@ public class EventController {
     }
 
     @PutMapping("/sign_up_on_event/") //запись на событие
-    public ResponseEntity<String> signUpOnEvent(@RequestParam String username, @RequestParam String eventName) {
-        return ResponseEntity.ok(eventSercice.signUpOnEvent(username, eventName));
+    public ResponseEntity<ApiResponse<?>> signUpOnEvent(@RequestParam String username, @RequestParam String eventName) {
+        ApiResponse<?> response = eventSercice.signUpOnEvent(username, eventName);
+//        if (response.getBody() instanceof RequestNotificationDTO)
+        return ResponseEntity
+                .status(response.getStatus())
+                .body(response);
     }
+
     @PutMapping("/leave_from_event/") //покинуть событие
     public ResponseEntity<String> leaveFromEvent(@RequestParam String username, @RequestParam String eventName) {
         return ResponseEntity.ok(eventSercice.leaveFromEvent(username, eventName));

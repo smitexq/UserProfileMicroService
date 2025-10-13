@@ -2,11 +2,13 @@ package com.eventhub.UserProfileMicroService.service;
 
 import com.eventhub.UserProfileMicroService.dao.EventRepository;
 import com.eventhub.UserProfileMicroService.dao.ProfileRepository;
+import com.eventhub.UserProfileMicroService.dto.ApiResponse;
 import com.eventhub.UserProfileMicroService.dto.EventsDTO;
 import com.eventhub.UserProfileMicroService.dto.NewEventDTO;
 import com.eventhub.UserProfileMicroService.dto.mappers.EventMap;
 import com.eventhub.UserProfileMicroService.models.Event;
 import com.eventhub.UserProfileMicroService.models.Profile;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -139,9 +141,9 @@ public class EventServiceImpl implements EventService{
 
 
     @Override
-    public String signUpOnEvent(String username, String eventName) {
+    public ApiResponse<?> signUpOnEvent(String username, String eventName) {
         Optional<Profile> user = profileRepo.findByUsername(username);
-        if (user.isEmpty()) return "Пользователь не найден";
+        if (user.isEmpty()) return errorResponse(404,"Пользователь не найден");
 
         Optional<Event> var_event = eventRepo.findByName(eventName);
 
@@ -149,10 +151,9 @@ public class EventServiceImpl implements EventService{
             Event event = var_event.get();
             String author_name = event.getAuthor().getUsername();
 
-            if (author_name.equals(username)) return "Вы пытаетесь записаться на свое мероприятие";
-            if (event.getParticipants().contains(user.get())) return String.format("Вы уже зарегестрированы на событие %s", eventName);
-//            if (user.get().getEvents().contains(event))
-            if (event.getParticipants().size() >= event.getMax_people()) return "Больше нет мест на запись";
+            if (author_name.equals(username)) return errorResponse(406,"Вы пытаетесь записаться на свое мероприятие");
+            if (event.getParticipants().contains(user.get())) return errorResponse(406, String.format("Вы уже зарегестрированы на событие %s", eventName));
+            if (event.getParticipants().size() >= event.getMax_people()) return errorResponse(406,"Больше нет мест на запись");
 
             event.addMember(
                     user.get()
@@ -160,22 +161,25 @@ public class EventServiceImpl implements EventService{
 
             eventRepo.save(event);
 
-            //Запрос на Mail. Добавить почту, username, названия события и время в Mail, чтобы там каждую минуту проверялось кого уведомить
-            mailService.sendPostRequestWithNoResponse(
-                    "/mail-service/reminder",
+            return new ApiResponse<>(HttpStatus.OK,
+                    String.format("Вы успешно записались на мероприятие %s", eventName),
                     Map.of(
-                            "username", username,
                             "email", user.get().getEmail(),
-                            "event_name", eventName,
-                            "time", event.getTime_of_event().toString()
+                            "time_of_event", event.getTime_of_event()
                     )
             );
-
-            return String.format("Вы успешно записались на мероприятие %s", eventName);
         }
 
-        return "Неизвестное мероприятие";
+        return errorResponse(404, "Неизвестное мероприятие");
     }
+
+    private ApiResponse<?> errorResponse(int statusCode, String msg) {
+        return new ApiResponse<>(
+                HttpStatus.valueOf(statusCode),
+                msg,
+                null);
+    }
+
 
 
     @Override
