@@ -16,7 +16,7 @@ public class WebConfig {
     @Bean
     public WebClient apiGatewayWebClient(WebClient.Builder builder) {
         return builder
-                .baseUrl("http://ApiGateway")
+                .baseUrl("http://ApiGateway/internal-api")
                 .build();
     }
 }
